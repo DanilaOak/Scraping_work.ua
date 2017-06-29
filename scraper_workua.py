@@ -51,7 +51,13 @@ def get_description(href: str) -> str:
         headers=BROWSER_HEADERS
     ).text
     soup = bs4.BeautifulSoup(html, "html.parser")
-    description = soup.find('div', {'class': 'overflow wordwrap'}).text
+    try:
+        description = soup.find('div', {'class': 'overflow wordwrap'}).text
+    except AttributeError:
+        print("No description")
+        with open('work_ua_error.txt', 'w+') as file:
+            file.write(str(work_url) + " - No description" + "\n")
+        return "No description"
     return description.replace(u'\xa0', u' ')
 
 
@@ -83,8 +89,8 @@ def main():
     ).text
     soup = bs4.BeautifulSoup(html, "html.parser")
     pages = get_pages(soup)
-    with open('work_ua.txt', 'w+') as file:
-        for page_num in range(1, pages+1):
+    with open('work_ua2.txt', 'w+') as file:
+        for page_num in range(2687, pages+1):
             print("{} of {} pages parsed".format(page_num, pages))
             payload = {
                 "page": page_num,
